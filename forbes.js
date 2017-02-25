@@ -3,13 +3,8 @@ var highland = require('highland')
 var csvWriter = require('csv-write-stream')
 var fs = require('fs')
 
-var lists = [
-    {type: 'person', year: 0, uri: 'rtb'}, // real-time billionaires
-    {type: 'person', year: 0, uri: 'rtrl'}, // real-time rich list, aka. the 400
-    {type: 'person', year: 2015, uri: 'powerful-people'},
-    {type: 'person', year: 2015, uri: 'hedge-fund-managers'},
-    {type: 'person', year: 2015, uri: 'china-billionaires' }
-]
+
+var years = [2010, 2011, 2012, 2013, 2014, 2015, 2016].reverse();
 
 function retrieve(query, callback) {
     var data = {
@@ -22,10 +17,16 @@ function retrieve(query, callback) {
     })
 }
 
-lists.map(function (list) {
-    highland([list])
-	.flatMap(highland.wrapCallback(retrieve))
-	.flatMap(JSON.parse)
-	.through(csvWriter())
-	.pipe(fs.createWriteStream('forbes-' + list.uri + '.csv'))
-})
+years.forEach(function(year){
+    var lists = [
+        {type: 'person', year: year, uri: 'billionaires' }
+    ]
+    lists.map(function (list) {
+        highland([list])
+    	.flatMap(highland.wrapCallback(retrieve))
+    	.flatMap(JSON.parse)
+    	.through(csvWriter())
+    	.pipe(fs.createWriteStream('data/forbes-' + list.uri + '-' + year + '.csv'))
+    })
+});
+
