@@ -4,7 +4,13 @@ var csvWriter = require('csv-write-stream')
 var fs = require('fs')
 
 
-var years = [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016].reverse();
+var years = [];
+var year = 1998;
+for (var i=0; i < 18; i++){
+    year += 1;
+    years.push(year);
+}
+var years = years.reverse();
 
 function retrieve(query, callback) {
     var data = {
